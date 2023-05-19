@@ -5,7 +5,7 @@ import requests
 import time
 import datetime
 import json
-from pythainlp.tokenize import dict_word_tokenize
+# from pythainlp.tokenize import dict_word_tokenize
 
 while True:
     try:
@@ -35,12 +35,7 @@ while True:
                         print(order)
                         text += order['menu_name']
                         if order['option_name']:
-                            # text += " - " + order['option_name']
-                            text = order['option_name']
-                            tokens = dict_word_tokenize(text, custom_dict=None, engine="newmm", minimum_word_len=6)
-
-                            for token in tokens:
-                                print(token)
+                            text += " - " + order['option_name']
                         text += '\n'
                         if order['comment']:
                             text += "     - " + order['comment'] + "\n"
