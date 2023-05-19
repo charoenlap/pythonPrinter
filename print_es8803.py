@@ -39,6 +39,11 @@ while True:
                         text += '\n'
                         if order['comment']:
                             text += "     - " + order['comment'] + "\n"
+                            # tokens = word_tokenize(order['comment'], engine="newmm")
+                            # filtered_tokens = [token for token in tokens if len(token) <= 20]
+                            # for token in tokens:
+                            #     # print(token)
+                            #     # text += "     - " + token + "\n"
                         orderArr.append(order['id'])
                     text += "==================================="
 
