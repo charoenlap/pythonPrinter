@@ -4,13 +4,15 @@ import win32gui
 import requests
 import time
 import datetime
+import json
 
 while True:
     # respData = [{"table_name":"Table 1","date_create":"2022-04-25 18:30:00","orders":[{"menu_name":"Grilled Salmon","option_name":"Buffalo Sauce","comment":"Medium rare"},{"menu_name":"Chicken Wings","option_name":"Buffalo Sauce","comment":"Extra crispy"}]}]
     respData = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinter')
     # print(respData)
-    if respData.ok:
-        data = respData.json()
+    if respData.ok is not None:
+        # data = respData.json()
+        data = json.loads(respData.content.decode('utf-8-sig'))
         for row in data:
         #     text = """ 
         #                 โต๊ะ 01
@@ -27,7 +29,7 @@ while True:
             text += "===================================\n"
             for order in row['orders']:
                 print(order)
-                text += "1x "+ order['menu_name']
+                text += order['menu_name']
                 if order['option_name']:
                     text += " - " + order['option_name']
                 text += '\n'
@@ -38,7 +40,7 @@ while True:
 
 
             font_name = "TH Sarabun New"
-            font_size = 2
+            font_size = 1.8
             font_weight = 800  # 800 is equivalent to bold
             paper_width = 55 * 1440 / 25.4
             paper_height = 2000
@@ -46,7 +48,8 @@ while True:
             printer_name = win32print.GetDefaultPrinter()
 
             hDC = win32ui.CreateDC()
-            hDC.CreatePrinterDC(printer_name)
+            # hDC.CreatePrinterDC(printer_name)
+            hDC.CreatePrinterDC('POS-80C')
 
             try:
                 hDC.StartDoc("Order Receipt")
@@ -83,7 +86,7 @@ while True:
                 finally:
                     hDC.EndDoc()
                     for orderId in orderArr:
-                        x = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
+                        # x = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
                         print('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
             finally:
                 hDC.DeleteDC()
