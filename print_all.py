@@ -9,10 +9,10 @@ import json
 
 while True:
     try:
-        for printer_name in ['POS-80C1', 'POS-80C2']:
+        for printer_name in ['POS-80C1', 'POS-80C2', 'GP-5890XII']:
             # respData = [{"table_name":"Table 1","date_create":"2022-04-25 18:30:00","orders":[{"menu_name":"Grilled Salmon","option_name":"Buffalo Sauce","comment":"Medium rare"},{"menu_name":"Chicken Wings","option_name":"Buffalo Sauce","comment":"Extra crispy"}]}]
             # respData = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinter')
-            respData = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinter&printer_name=' + printer_name)
+            respData = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_html/index.php?route=order/feedPrinter&printer_name=' + printer_name)
             # print(respData)
             if respData.ok is not None:
                 # data = respData.json()
@@ -55,7 +55,7 @@ while True:
                         paper_width = 55 * 1440 / 25.4
                         paper_height = 2000
 
-                        printer_name = win32print.GetDefaultPrinter()
+                        # printer_name = win32print.GetDefaultPrinter()
 
                         hDC = win32ui.CreateDC()
                         # hDC.CreatePrinterDC(printer_name)
@@ -95,80 +95,80 @@ while True:
                                     hDC.EndPage()
                             finally:
                                 hDC.EndDoc()
-                                for orderId in orderArr:
+                                # for orderId in orderArr:
                                     # x = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
-                                    print('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
+                                    # print('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
                         finally:
                             hDC.DeleteDC()
-                    eles:
-                    # printer_name = "POS-80C1"
-                    hDC = win32ui.CreateDC()
-                    hDC.CreatePrinterDC(printer_name)
+                    else:
+                        # printer_name = "POS-80C1"
+                        hDC = win32ui.CreateDC()
+                        hDC.CreatePrinterDC(printer_name)
 
-                    # Define the font properties
-                    font_name = "TH Sarabun New"
-                    font_size = 1.8  # Smaller font size
-                    font_weight = 800
+                        # Define the font properties
+                        font_name = "TH Sarabun New"
+                        font_size = 1.8  # Smaller font size
+                        font_weight = 800
 
-                    # Set up paper size
-                    paper_width = 80 * 1440 / 25.4  # Convert 80mm to pixels
-                    paper_height = 2000  # Adjust as needed
+                        # Set up paper size
+                        paper_width = 80 * 1440 / 25.4  # Convert 80mm to pixels
+                        paper_height = 2000  # Adjust as needed
 
-                    # Start printing the receipt
-                    hDC.StartDoc("Receipt")
-                    hDC.StartPage()
+                        # Start printing the receipt
+                        hDC.StartDoc("Receipt")
+                        hDC.StartPage()
 
-                    font = win32ui.CreateFont({
-                        "name": font_name,
-                        "height": int(font_size * -20),  # Convert font size to logical units
-                        "weight": font_weight,
-                    })
+                        font = win32ui.CreateFont({
+                            "name": font_name,
+                            "height": int(font_size * -20),  # Convert font size to logical units
+                            "weight": font_weight,
+                        })
 
-                    hDC.SelectObject(font)
-
-                    # Calculate the size of a character in the selected font
-                    char_width, char_height = hDC.GetTextExtent("X")
-
-                    # Define the initial x and y coordinates for printing
-                    x = 10  # Move the text closer to the left margin
-                    y = 100
-
-                    # Print each line of the receipt
-                    i = 0
-                    for line in text.splitlines():
-                        if i == 0:
-                            font = win32ui.CreateFont({
-                                "name": font_name,
-                                "height": int(3 * -20),  # Convert font size to logical units
-                                "weight": font_weight,
-                            })
-                            hDC.SelectObject(font)
-                        else:
-                            font = win32ui.CreateFont({
-                                "name": font_name,
-                                "height": int(font_size * -20),  # Convert font size to logical units
-                                "weight": font_weight,
-                            })
                         hDC.SelectObject(font)
-                        i+=1
-                        hDC.TextOut(x, y, line)
-                        y += char_height
 
-                        # Check if we reached the end of the page
-                        if y + char_height > paper_height:
-                            hDC.EndPage()
-                            hDC.StartPage()
-                            y = 100  # Reset y coordinate to top of new page
+                        # Calculate the size of a character in the selected font
+                        char_width, char_height = hDC.GetTextExtent("X")
 
-                    # End printing and clean up the DC
-                    hDC.EndPage()
-                    hDC.EndDoc()
-                    hDC.DeleteDC()
+                        # Define the initial x and y coordinates for printing
+                        x = 10  # Move the text closer to the left margin
+                        y = 100
+
+                        # Print each line of the receipt
+                        i = 0
+                        for line in text.splitlines():
+                            if i == 0:
+                                font = win32ui.CreateFont({
+                                    "name": font_name,
+                                    "height": int(3 * -20),  # Convert font size to logical units
+                                    "weight": font_weight,
+                                })
+                                hDC.SelectObject(font)
+                            else:
+                                font = win32ui.CreateFont({
+                                    "name": font_name,
+                                    "height": int(font_size * -20),  # Convert font size to logical units
+                                    "weight": font_weight,
+                                })
+                            hDC.SelectObject(font)
+                            i += 1
+                            hDC.TextOut(x, y, line)
+                            y += char_height
+
+                            # Check if we reached the end of the page
+                            if y + char_height > paper_height:
+                                hDC.EndPage()
+                                hDC.StartPage()
+                                y = 100  # Reset y coordinate to top of new page
+
+                        # End printing and clean up the DC
+                        hDC.EndPage()
+                        hDC.EndDoc()
+                        hDC.DeleteDC()
                 for orderId in orderArr:
-                    x = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
-                    print('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
-    x = datetime.datetime.now()
-    print(x)
-    time.sleep(2)
-except:
-print('fail')
+                    x = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
+                    # print('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
+        x = datetime.datetime.now()
+        print(x)
+        time.sleep(2)
+    except Exception:
+        print()
