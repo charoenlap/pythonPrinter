@@ -5,14 +5,14 @@ import requests
 import time
 import datetime
 import json
-# from pythainlp.tokenize import dict_word_tokenize
+from pythainlp.tokenize import word_tokenize
 
 while True:
     try:
         for printer_name in ['POS-80C1', 'POS-80C2', 'GP-5890XII']:
             # respData = [{"table_name":"Table 1","date_create":"2022-04-25 18:30:00","orders":[{"menu_name":"Grilled Salmon","option_name":"Buffalo Sauce","comment":"Medium rare"},{"menu_name":"Chicken Wings","option_name":"Buffalo Sauce","comment":"Extra crispy"}]}]
-            # respData = requests.get('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinter')
-            respData = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_html/index.php?route=order/feedPrinter&printer_name=' + printer_name)
+            # respData = requests.get('https://charoenlap.com/restaurant/public_htmls/index.php?route=order/feedPrinter')
+            respData = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_htmls/index.php?route=order/feedPrinter&printer_name=' + printer_name)
             # print(respData)
             if respData.ok is not None:
                 # data = respData.json()
@@ -28,7 +28,7 @@ while True:
                     # ผัดกระเพราทะเล - พิเศษ + ไข่ดาว
                     # ==================================="""
                     orderArr = []
-                    text = "                โต๊ะ "+ row['table_name'] +"\n\n"
+                    text = "         "+ row['table_name'] +"\n\n"
                     text += "เวลา " + row['date_create'] + "\n"
                     text += "===================================\n"
                     for order in row['orders']:
@@ -38,14 +38,25 @@ while True:
                             text += " - " + order['option_name']
                         text += '\n'
                         if order['comment']:
-                            text += "     - " + order['comment'] + "\n"
-                            # tokens = word_tokenize(order['comment'], engine="newmm")
-                            # filtered_tokens = [token for token in tokens if len(token) <= 20]
-                            # for token in tokens:
-                            #     # print(token)
-                            #     # text += "     - " + token + "\n"
+                            # text += "     - " + order['comment'] + "\n"
+
+                            tokens = word_tokenize(order['comment'])
+                            result = ''
+                            count = 0
+
+                            for token in tokens:
+                                if count + len(token) + 1 > 40:
+                                    result += '\n     - '
+                                    count = 0
+
+                                result += token
+                                count += len(token) + 1
+                            text += "     - " + result + "\n"
                         orderArr.append(order['id'])
                     text += "==================================="
+                    # text += "===================================\n"
+                    # text += "===================================\n"
+                    # text += "==================================="
 
                     if printer_name == 'GP-5890XII':
                         print(printer_name)
@@ -107,7 +118,7 @@ while True:
 
                         # Define the font properties
                         font_name = "TH Sarabun New"
-                        font_size = 1.8  # Smaller font size
+                        font_size = 2  # Smaller font size
                         font_weight = 800
 
                         # Set up paper size
@@ -164,11 +175,11 @@ while True:
                         hDC.EndPage()
                         hDC.EndDoc()
                         hDC.DeleteDC()
-                for orderId in orderArr:
-                    x = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
-                    # print('https://charoenlap.com/restaurant/public_html/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
+                    for orderId in orderArr:
+                        x = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_htmls/index.php?route=order/feedPrinterUpdate&order_id='+orderId)
+                        # print('https://charoenlap.com/restaurant/public_htmls/index.php?route=order/feedPrinterUpdate&order_id=' + orderId)
         x = datetime.datetime.now()
         print(x)
         time.sleep(2)
-    except Exception:
-        print()
+    except Exception as e:
+        print(e)
