@@ -6,6 +6,7 @@ import time
 import datetime
 import json
 from datetime import datetime
+
 printer_name = 'POS-80C1'
 
 def format_currency(amount):
@@ -18,49 +19,44 @@ def generate_receipt(items):
     current_datetime = datetime.now()
 
     # Header line
-    receipt += "=" * 40 + "\n"
-    receipt += "{:^40}\n".format("ใบเสร็จ")
-    receipt += "=" * 40 + "\n"
-    receipt += "{:^40}\n".format(current_datetime.strftime("%d/%m/%Y %H:%M:%S"))
-    receipt += "-" * 40 + "\n"
+    
+    receipt += "{:^40}\n".format("ใบเสร็จ") + "\n"
+    receipt += "=" * 55 + "\n"
+    receipt += "{:^55}\n".format(current_datetime.strftime("%d/%m/%Y %H:%M:%S"))
+    receipt += "-" * 55 + "\n"
 
     total = 0  # Initialize total
 
     # Print each item
     for item in items:
         name = item.get('name', '')
-        option = item.get('option', '')
+        comment = item.get('comment', '')
+        option_name = item.get('option_name', '')
         price_str = item.get('price', '0.00')
         price = float(price_str)
         total += price
 
         # Format and append item name and price without decimal places
         formatted_price = "{:,.0f}".format(price)
-        receipt += "{:<35}{:>5}\n".format(name, formatted_price)
 
-        # Append item option on multiple lines with appropriate indentation
-        if option:
-            option_lines = option.split("\n")
-            for line in option_lines:
-                receipt += "  - {:<32}\n".format(line.strip())
+        # Combine item name and option name
+        combined_name = f"{name} - {option_name}" if option_name else name
 
-        receipt += "-" * 40 + "\n"
+        # Append item name and price
+        receipt += "{:<50}{:>5}\n".format(combined_name, formatted_price)
 
+        # Append item comment on multiple lines with appropriate indentation
+        if comment:
+            comment_lines = comment.split("\n")
+            for line in comment_lines:
+                receipt += "  {:<47}\n".format(line.strip())
+
+    receipt += "-" * 55 + "\n"
     formatted_total = "{:,.0f}".format(total)
-    receipt += "{:<35}{:>5}\n".format("Total", formatted_total)
-    receipt += "=" * 40 + "\n"  # Footer line
+    receipt += "{:<50}{:>5}\n".format("Total", formatted_total)
+    receipt += "=" * 55 + "\n"  # Footer line
 
     return receipt
-
-
-# Example usage with multiple items
-items = [
-    {"name": "Item 1", "option": "Option A", "price": "9.99"},
-    {"name": "Item 2", "option": "This is a long option\nthat exceeds 26 characters", "price": "14.99"},
-    {"name": "Item 3", "option": "Option\nB", "price": "5.99"}
-]
-
-
 
 respDataReceipt = requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_htmls/index.php?route=order/getReceipt')
 respDataReceipt = json.loads(respDataReceipt.content.decode('utf-8-sig'))
@@ -77,11 +73,11 @@ for receipt in respDataReceipt:
 
         # Define the font properties
         font_name = "TH Sarabun New"
-        font_size = 1.8  # Smaller font size
+        font_size = 1.7  # Smaller font size
         font_weight = 800
 
         # Set up paper size
-        paper_width = 80 * 1440 / 25.4  # Convert 80mm to pixels
+        paper_width = 55 * 1440 / 25.4  # Convert 55mm to pixels
         paper_height = 2000  # Adjust as needed
 
         # Start printing the order
