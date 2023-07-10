@@ -18,7 +18,7 @@ def generate_receipt(items):
 
     # Header line
     
-    receipt += "{:^30}\n".format("ใบเสร็จ " + items[0]['table_name']) + " \n"
+    receipt += "{:^30}\n".format("*** ใบเสร็จ " + items[0]['table_name']) + " \n"
     receipt += "=" * 55 + "\n"
     receipt += current_datetime.strftime("%d/%m/%Y %H:%M:%S") + " \n"
     receipt += "-" * 55 + "\n"
