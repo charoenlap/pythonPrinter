@@ -17,9 +17,9 @@ def generate_receipt(items):
     current_datetime = datetime.datetime.now()
 
     # Header line
-    
-    receipt += "{:^30}\n".format("*** ใบเสร็จ " + items[0]['table_name']) + " \n"
-    receipt += "=" * 55 + "\n"
+    receipt += "{:^15}\n".format("ร้าน ต.ติ๊ก ต้มเลือดหมู (สะแกงาม14)") + " \n"
+    receipt += "-" * 55 + "\n"
+    receipt += "{:^60}\n".format(" ใบเสร็จ " + items[0]['table_name']) + " \n"
     receipt += current_datetime.strftime("%d/%m/%Y %H:%M:%S") + " \n"
     receipt += "-" * 55 + "\n"
 
@@ -52,7 +52,9 @@ def generate_receipt(items):
     receipt += "-" * 55 + "\n"
     formatted_total = "{:,.0f}".format(total)
     receipt += "{:<50}{:>5}\n".format("Total", formatted_total)
-    receipt += "=" * 55 + "\n"  # Footer line
+    receipt += "=" * 55 + "\n"
+    receipt += "สั่งครบ 100 บาท ส่งฟรี \n"
+    receipt += "line: @t.tik / เบอร์ 091-4016388 \n"
 
     return receipt
 
@@ -272,10 +274,10 @@ while True:
                             # Print each line of the order
                             i = 0
                             for line in receipt.splitlines():
-                                if i == 0:
+                                if i == 0 or i == 3:
                                     font = win32ui.CreateFont({
                                         "name": font_name,
-                                        "height": int(3 * -20),  # Convert font size to logical units
+                                        "height": int(2 * -20),  # Convert font size to logical units
                                         "weight": font_weight,
                                     })
                                     hDC.SelectObject(font)
@@ -302,6 +304,7 @@ while True:
                             hDC.DeleteDC()
 
                             requests.get('http://tikkubzaza.trueddns.com:54242/web/restaurant/public_htmls/index.php?route=order/delReceipt&table_id='+table_id)
+                            time.sleep(3)
         x = datetime.datetime.now()
         print(x)
         time.sleep(2)
